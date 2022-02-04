@@ -1,0 +1,15 @@
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/app
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/app.deps.json
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/app.runtimeconfig.json
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/app.dll
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/ref/app.dll
+/home/paulo/Desktop/lacuna/app/bin/Debug/net6.0/app.pdb
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.csproj.AssemblyReference.cache
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.GeneratedMSBuildEditorConfig.editorconfig
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.AssemblyInfoInputs.cache
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.AssemblyInfo.cs
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.csproj.CoreCompileInputs.cache
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.dll
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/ref/app.dll
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.pdb
+/home/paulo/Desktop/lacuna/app/obj/Debug/net6.0/app.genruntimeconfig.cache
