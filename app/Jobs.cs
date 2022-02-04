@@ -12,7 +12,6 @@ public class Job
     public async Task encodeStrand(string jobStrand, string jobId, string userAccessToken)
     {
         string bits = Converter.stringToBits(jobStrand);
-        // Console.WriteLine("Bits = {0}", bits);
 
         var byteArray = Enumerable.Range(0, int.MaxValue / 8)
                           .Select(i => i * 8)
@@ -20,7 +19,6 @@ public class Job
                           .Select(i => bits.Substring(i, 8))
                           .Select(s => Convert.ToByte(s, 2))
                           .ToArray();
-        // Console.WriteLine("BYtes = {0}", byteArray[0]);
 
         string strandEncoded = System.Convert.ToBase64String(byteArray);
 
@@ -37,9 +35,7 @@ public class Job
 
     public string decodeStrand(string jobEncodedStrand)
     {
-        // Console.WriteLine("Base64 = {0}", jobEncodedStrand);
         byte[] byteArray = System.Convert.FromBase64String(jobEncodedStrand);
-        // Console.WriteLine("BYTE ARRAY = {0}", byteArray);
 
         string[] byteString = byteArray.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')).ToArray();
         StringBuilder bits = new StringBuilder();
@@ -47,7 +43,6 @@ public class Job
         {
             bits.Append(bytes);
         }
-        // Console.WriteLine("bits = {0}", bits);
 
         string decodedStrand = Converter.bitsToString(bits.ToString());
 
