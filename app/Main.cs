@@ -1,20 +1,25 @@
-using System;
-using System.Text.Json;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-
-
-public class Test
+public class Program
 {
     public static async Task Main()
     {
 
-        Console.WriteLine("\nJá possui conta? (s/n)");
+        string? hasAccount = "";
+        bool invalid = false;
+        while (hasAccount.CompareTo("s") != 0 && hasAccount.CompareTo("n") != 0)
+        {
+            if (invalid)
+                Console.WriteLine("\nOpção inválida, apenas 's' ou 'n' são aceitas");
+            invalid = true;
+            Console.WriteLine("\nJá possui conta? (s/n)");
+            hasAccount = Console.ReadLine();
+            if (hasAccount is null)
+            {
+                hasAccount = "";
+            }
 
-        string? hasAccount = Console.ReadLine();
+        }
         User user = new User();
-        if (hasAccount == "n")
+        if (hasAccount.CompareTo("n") == 0)
         {
             await user.register();
         }
@@ -35,36 +40,62 @@ public class Test
             {
                 case 1:
                     AsyncFunctions req = new AsyncFunctions();
-                    JSONModel.ResponseObject jobData = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
-                    Job jobObject = new Job();
-                    jobObject = jobData.job;
+                    JSONModel.ResponseObject jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
+                    if (jobObject.code == "Unauthorized")
+                    {
+                        Console.WriteLine("Não autorizado, tentando reconexão...");
+                        await user.relogin();
+                        jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
+                    }
 
-                    Console.WriteLine("Job Type = {0}", jobObject.type);
+                    Job jobData = new Job();
+                    jobData = jobObject.job;
+
+                    Console.WriteLine("Job Type = {0}", jobData.type);
 
                     Job jobInstance = new Job();
 
-                    if (jobObject.type == "DecodeStrand")
+                    if (jobData.type == "DecodeStrand")
                     {
-                        string decodedStrand = jobInstance.decodeStrand(jobObject.strandEncoded);
+                        string decodedStrand = jobInstance.decodeStrand(jobData.strandEncoded);
 
                         //prepara o request
                         var body = new Dictionary<string, string>{
-                {"strand", decodedStrand}
-            };
+                            {"strand", decodedStrand}
+                        };
                         AsyncFunctions request = new AsyncFunctions();
-                        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobObject.id + "/decode";
+                        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobData.id + "/decode";
 
                         var responseDict = await request.makeAsyncRequest(url, body, "application/json", user.AccessToken);
-                        Console.WriteLine("DECODE RESPONSE = {0}", responseDict.code);
 
+                        Console.WriteLine("Decode Response = {0}", responseDict.code);
                     }
-                    else if (jobObject.type == "EncodeStrand")
+
+                    else if (jobData.type == "EncodeStrand")
                     {
-                        await jobInstance.encodeStrand(jobObject.strand, jobObject.id, user.AccessToken);
+                        string strandEncoded = jobInstance.encodeStrand(jobData.strand);
+                        var body = new Dictionary<string, string>{
+                            {"strandEncoded", strandEncoded}
+                        };
+                        AsyncFunctions request = new AsyncFunctions();
+                        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobData.id + "/encode";
+
+                        var responseDict = await request.makeAsyncRequest(url, body, "application/json", user.AccessToken);
+                        Console.WriteLine("Encode Response = {0}", responseDict.code);
                     }
-                    else if (jobObject.type == "CheckGene")
+
+                    else if (jobData.type == "CheckGene")
                     {
-                        await jobInstance.checkGene(jobObject.strandEncoded, jobObject.geneEncoded, jobObject.id, user.AccessToken);
+                        bool isActive = jobInstance.checkGene(jobData.strandEncoded, jobData.geneEncoded);
+                        var body = new Dictionary<string, bool>{
+                            {"isActivated", isActive}
+                        };
+                        AsyncFunctions request = new AsyncFunctions();
+                        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobData.id + "/gene";
+
+                        var responseDict = await request.makeAsyncRequestBool(url, body, "application/json", user.AccessToken);
+
+                        Console.WriteLine("Check Gene Response = {0}", responseDict.code);
                     }
 
                     break;

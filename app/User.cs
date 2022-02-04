@@ -1,8 +1,4 @@
 ﻿//IMPORTS
-
-using System;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 class User
 {
     ValidationApi validator = new ValidationApi();
@@ -48,17 +44,17 @@ class User
             int usernameValid = validator.usernameValidator(username);
             if (usernameValid == -1)
             {
-                Console.WriteLine("Nome de usuário não pode conter espaços\n");
+                Console.WriteLine("\nNome de usuário não pode conter espaços\n");
                 continue;
             }
             else if (usernameValid == -2)
             {
-                Console.WriteLine("Nome possui caractere inválido\n");
+                Console.WriteLine("\nNome possui caractere inválido\n");
                 continue;
             }
             else if (usernameValid == -3)
             {
-                Console.WriteLine("Nome tem tamanho inválido\n");
+                Console.WriteLine("\nNome tem tamanho inválido\n");
                 continue;
             }
 
@@ -80,7 +76,7 @@ class User
             int emailValid = validator.emailValidator(email);
             if (emailValid == -1)
             {
-                Console.WriteLine("Email inválido, digite um email no formato exemplo@exemplo.abc\n");
+                Console.WriteLine("\nEmail inválido, digite um email no formato exemplo@exemplo.abc\n");
                 continue;
             }
 
@@ -105,7 +101,7 @@ class User
             bool passwordValid = validator.passwordValidator(password);
             if (!passwordValid)
             {
-                Console.WriteLine("A senha tem que possuir pelo menos 8 caracteres\n");
+                Console.WriteLine("\nA senha tem que possuir pelo menos 8 caracteres\n");
                 continue;
             }
             break;
@@ -136,7 +132,7 @@ class User
         }
         else
         {
-            Console.WriteLine("Conta criada com sucesso");
+            Console.WriteLine("\nConta criada com sucesso");
         }
     }
     public async Task login()
@@ -159,6 +155,18 @@ class User
             return;
         }
         this.accessToken = responseDict.accessToken;
-        Console.WriteLine("Logado!");
+        Console.WriteLine("\nLogado com sucesso!");
+    }
+
+    public async Task relogin()
+    {
+        var body = new Dictionary<string, string>{
+                {"username", username},
+                {"password", password}
+            };
+        AsyncFunctions req = new AsyncFunctions();
+        var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/login", body, "application/json");
+        this.accessToken = responseDict.accessToken;
+        Console.WriteLine("Conexão estabelecida com sucesso!");
     }
 }

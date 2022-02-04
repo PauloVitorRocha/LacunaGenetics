@@ -9,7 +9,7 @@ public class Job
     public string geneEncoded { get; set; } = "";
 
 
-    public async Task encodeStrand(string jobStrand, string jobId, string userAccessToken)
+    public string encodeStrand(string jobStrand)
     {
         string bits = Converter.stringToBits(jobStrand);
 
@@ -21,15 +21,8 @@ public class Job
                           .ToArray();
 
         string strandEncoded = System.Convert.ToBase64String(byteArray);
+        return strandEncoded;
 
-        var body = new Dictionary<string, string>{
-                {"strandEncoded", strandEncoded}
-            };
-        AsyncFunctions request = new AsyncFunctions();
-        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobId + "/encode";
-
-        var responseDict = await request.makeAsyncRequest(url, body, "application/json", userAccessToken);
-        Console.WriteLine("ENCODE RESPONSE = {0}", responseDict.code);
     }
 
 
@@ -50,21 +43,22 @@ public class Job
     }
 
 
-    public async Task checkGene(string jobEncodedStrand, string geneEncodedStrand, string jobId, string userAccessToken)
+    public bool checkGene(string jobEncodedStrand, string geneEncodedStrand)
     {
         string decodedJobStrand = decodeStrand(jobEncodedStrand);
         if (decodedJobStrand[0] == 'G')
         {
             decodedJobStrand = Converter.getTemplateStrand(decodedJobStrand);
         }
-        string decodedGeneStrand = decodeStrand(geneEncodedStrand);
 
+        string decodedGeneStrand = decodeStrand(geneEncodedStrand);
         int geneSize = decodedGeneStrand.Length;
         int halfGeneSize = geneSize / 2;
         if (geneSize % 2 != 0)
         {
             halfGeneSize += 1;
         }
+
         //monta string de metade do tamanho
         StringBuilder stringToBeChecked = new StringBuilder();
         for (int i = 0; i < halfGeneSize; i++)
@@ -85,15 +79,16 @@ public class Job
             stringToBeChecked.Remove(0, 1);
             stringToBeChecked.Append(decodedGeneStrand[halfGeneSize + i]);
         }
-        Console.WriteLine("ATIVO = {0}", isActive);
+        Console.WriteLine("Ativo = {0}", isActive);
+        return isActive;
 
-        var body = new Dictionary<string, bool>{
-            {"isActivated", isActive}
-        };
-        AsyncFunctions request = new AsyncFunctions();
-        string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobId + "/gene";
+        // var body = new Dictionary<string, bool>{
+        //     {"isActivated", isActive}
+        // };
+        // AsyncFunctions request = new AsyncFunctions();
+        // string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobId + "/gene";
 
-        var responseDict = await request.makeAsyncRequestBool(url, body, "application/json", userAccessToken);
-        Console.WriteLine("CHECK GENE RESPONSE = {0}", responseDict.code);
+        // var responseDict = await request.makeAsyncRequestBool(url, body, "application/json", userAccessToken);
+        // Console.WriteLine("Check Gene Response = {0}", responseDict.code);
     }
 }
