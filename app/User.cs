@@ -11,26 +11,26 @@ class User
 
     public string Username
     {
-        get { return username; }   // get method
-        set { username = value; }  // set method
+        get { return username; }
+        set { username = value; }
     }
 
     public string Email
     {
-        get { return email; }   // get method
-        set { email = value; }  // set method
+        get { return email; }
+        set { email = value; }
     }
 
     public string Password
     {
-        get { return password; }   // get method
-        set { password = value; }  // set method
+        get { return password; }
+        set { password = value; }
     }
 
     public string AccessToken
     {
-        get { return accessToken; }   // get method
-        set { accessToken = value; }  // set method
+        get { return accessToken; }
+        set { accessToken = value; }
     }
 
     public int validateUsername()
@@ -38,7 +38,13 @@ class User
         while (true)
         {
             Console.WriteLine("username: ");
-            username = Console.ReadLine();
+            string? usn = Console.ReadLine();
+            if (usn == null)
+            {
+                usn = "";
+            }
+            username = usn;
+
             int usernameValid = validator.usernameValidator(username);
             if (usernameValid == -1)
             {
@@ -65,7 +71,12 @@ class User
         while (true)
         {
             Console.WriteLine("email: ");
-            email = Console.ReadLine();
+            string? eml = Console.ReadLine();
+            if (eml == null)
+            {
+                eml = "";
+            }
+            email = eml;
             int emailValid = validator.emailValidator(email);
             if (emailValid == -1)
             {
@@ -85,7 +96,12 @@ class User
         while (true)
         {
             Console.WriteLine("password: ");
-            password = Console.ReadLine();
+            string? psw = Console.ReadLine();
+            if (psw == null)
+            {
+                psw = "";
+            }
+            password = psw;
             bool passwordValid = validator.passwordValidator(password);
             if (!passwordValid)
             {
@@ -98,6 +114,8 @@ class User
     }
     public async Task register()
     {
+        Console.WriteLine("\nNovo Cadastro\n");
+
         validateUsername();
         validateEmail();
         validatePassword();
@@ -107,17 +125,23 @@ class User
                 {"email", email},
                 {"password", password}
             };
-        Console.WriteLine("IMH ERE{0}", username);
         AsyncFunctions req = new AsyncFunctions();
         var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/create", body, "application/json");
         if (responseDict.code != "Success")
         {
-            Console.WriteLine("Erro ao criar conta");
+            Console.WriteLine("\nErro ao criar conta");
+            Console.WriteLine("Mensagem: {0}\n", responseDict.message);
+            await register();
+
         }
-        Console.WriteLine("Conta criada com sucesso");
+        else
+        {
+            Console.WriteLine("Conta criada com sucesso");
+        }
     }
     public async Task login()
     {
+        Console.WriteLine("\nLogin\n");
 
         validateUsername();
         validatePassword();
@@ -130,7 +154,7 @@ class User
         var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/login", body, "application/json");
         if (responseDict.code != "Success")
         {
-            Console.WriteLine("Erro ao realizar login");
+            Console.WriteLine("\nUsuário ou senha incorreta");
             await login();
             return;
         }

@@ -5,7 +5,7 @@ class AsyncFunctions
 {
     private static readonly HttpClient client = new HttpClient();
 
-    public async Task<JSONModel.Response> makeAsyncRequest(string url, Dictionary<string, string> body, string contentType, string authorization = null)
+    public async Task<JSONModel.Response> makeAsyncRequest(string url, Dictionary<string, string> body, string contentType, string authorization = "")
     {
 
         string myJson = JsonSerializer.Serialize(body);
@@ -14,7 +14,7 @@ class AsyncFunctions
 
         req.Content = new StringContent(myJson, Encoding.UTF8, contentType);
 
-        if (authorization is not null)
+        if (authorization != "")
         {
             req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
         }
@@ -23,7 +23,10 @@ class AsyncFunctions
 
         string responseString = await response.Content.ReadAsStringAsync();
 
-        JSONModel.Response responseDict = JsonSerializer.Deserialize<JSONModel.Response>(responseString);
+        JSONModel.Response? responseDict = JsonSerializer.Deserialize<JSONModel.Response>(responseString);
+        if (responseDict == null){
+            responseDict = new JSONModel.Response();
+        }
 
         return responseDict;
     }
@@ -35,12 +38,16 @@ class AsyncFunctions
         var response = await client.SendAsync(req);
 
         string responseString = await response.Content.ReadAsStringAsync();
-        JSONModel.ResponseObject resp = JsonSerializer.Deserialize<JSONModel.ResponseObject>(responseString);
-        return JsonSerializer.Deserialize<JSONModel.ResponseObject>(responseString);
+        JSONModel.ResponseObject? resp = JsonSerializer.Deserialize<JSONModel.ResponseObject>(responseString);
+        if (resp == null)
+        {
+            resp = new JSONModel.ResponseObject();
+        }
+        return resp;
 
     }
 
-    public async Task<JSONModel.Response> makeAsyncRequestBool(string url, Dictionary<string, bool> body, string contentType, string authorization = null)
+    public async Task<JSONModel.Response> makeAsyncRequestBool(string url, Dictionary<string, bool> body, string contentType, string authorization = "")
     {
 
         string myJson = JsonSerializer.Serialize(body);
@@ -49,7 +56,7 @@ class AsyncFunctions
 
         req.Content = new StringContent(myJson, Encoding.UTF8, contentType);
 
-        if (authorization is not null)
+        if (authorization != "")
         {
             req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authorization);
         }
@@ -58,8 +65,11 @@ class AsyncFunctions
 
         string responseString = await response.Content.ReadAsStringAsync();
 
-        JSONModel.Response responseDict = JsonSerializer.Deserialize<JSONModel.Response>(responseString);
-
+        JSONModel.Response? responseDict = JsonSerializer.Deserialize<JSONModel.Response>(responseString);
+        if (responseDict == null)
+        {
+            responseDict = new JSONModel.Response();
+        }
         return responseDict;
     }
 }

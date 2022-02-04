@@ -11,17 +11,16 @@ public class Test
     {
 
         Console.WriteLine("\nJá possui conta? (s/n)");
-        string hasAccount = Console.ReadLine();
+
+        string? hasAccount = Console.ReadLine();
         User user = new User();
         if (hasAccount == "n")
         {
             await user.register();
         }
         await user.login();
-        Console.WriteLine("ACESO TOKEN = {0}", user.AccessToken);
         while (user.AccessToken == "")
         {
-            Console.WriteLine("\nUsuário ou senha incorreta");
             await user.login();
         }
 
