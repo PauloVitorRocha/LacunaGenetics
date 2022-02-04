@@ -41,10 +41,16 @@ public class Program
                 case 1:
                     AsyncFunctions req = new AsyncFunctions();
                     JSONModel.ResponseObject jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
-                    if (jobObject.code == "Unauthorized")
+                    int cntRetries=0;
+                    while (jobObject.code == "Unauthorized")
                     {
+                        if(cntRetries == 3){
+                            Console.WriteLine("Não foi possivel reconectar, encerrando aplicação...");
+                            Environment.Exit(0);
+                        }
                         Console.WriteLine("Não autorizado, tentando reconexão...");
                         await user.relogin();
+                        cntRetries ++;
                         jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
                     }
 
