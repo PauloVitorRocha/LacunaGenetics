@@ -44,17 +44,17 @@ class User
             int usernameValid = validator.usernameValidator(username);
             if (usernameValid == -1)
             {
-                Console.WriteLine("\nNome de usuário não pode conter espaços\n");
+                Console.WriteLine("\nUsername cannot contain whitespaces\n");
                 continue;
             }
             else if (usernameValid == -2)
             {
-                Console.WriteLine("\nNome possui caractere inválido\n");
+                Console.WriteLine("\nUsername contains invalid characters\n");
                 continue;
             }
             else if (usernameValid == -3)
             {
-                Console.WriteLine("\nNome tem tamanho inválido\n");
+                Console.WriteLine("\nUsername has wrong size\n");
                 continue;
             }
 
@@ -76,7 +76,7 @@ class User
             int emailValid = validator.emailValidator(email);
             if (emailValid == -1)
             {
-                Console.WriteLine("\nEmail inválido, digite um email no formato exemplo@exemplo.abc\n");
+                Console.WriteLine("\nInvalid email, accepted format is example@example.abc\n");
                 continue;
             }
 
@@ -92,16 +92,29 @@ class User
         while (true)
         {
             Console.WriteLine("password: ");
-            string? psw = Console.ReadLine();
-            if (psw == null)
+            var pass = string.Empty;
+            ConsoleKey key;
+            do
             {
-                psw = "";
-            }
-            password = psw;
-            bool passwordValid = validator.passwordValidator(password);
+                var keyInfo = Console.ReadKey(intercept: true);
+                key = keyInfo.Key;
+
+                if (key == ConsoleKey.Backspace && pass.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    pass = pass[0..^1];
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    Console.Write("*");
+                    pass += keyInfo.KeyChar;
+                }
+            } while (key != ConsoleKey.Enter);
+            password = pass;
+            bool passwordValid = validator.passwordValidator(pass);
             if (!passwordValid)
             {
-                Console.WriteLine("\nA senha tem que possuir pelo menos 8 caracteres\n");
+                Console.WriteLine("\nThe password must be 8 characters long\n");
                 continue;
             }
             break;
@@ -110,7 +123,7 @@ class User
     }
     public async Task register()
     {
-        Console.WriteLine("\nNovo Cadastro\n");
+        Console.WriteLine("\nRegistration\n");
 
         validateUsername();
         validateEmail();
@@ -125,14 +138,15 @@ class User
         var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/create", body, "application/json");
         if (responseDict.code != "Success")
         {
-            Console.WriteLine("\nErro ao criar conta");
-            Console.WriteLine("Mensagem: {0}\n", responseDict.message);
+            Console.WriteLine("\nError on creating account");
+            Console.WriteLine("Message: {0}\n", responseDict.message);
             await register();
 
         }
         else
         {
-            Console.WriteLine("\nConta criada com sucesso");
+            Console.Clear();
+            Console.WriteLine("\nAccount created successfully");
         }
     }
     public async Task login()
@@ -150,12 +164,14 @@ class User
         var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/login", body, "application/json");
         if (responseDict.code != "Success")
         {
-            Console.WriteLine("\nUsuário ou senha incorreta");
+            Console.Clear();
+            Console.WriteLine("\nIncorrect username or password");
             await login();
             return;
         }
         this.accessToken = responseDict.accessToken;
-        Console.WriteLine("\nLogado com sucesso!");
+        Console.Clear();
+        Console.WriteLine("\nLogged in!");
     }
 
     public async Task relogin()
@@ -167,6 +183,6 @@ class User
         AsyncFunctions req = new AsyncFunctions();
         var responseDict = await req.makeAsyncRequest("https://gene.lacuna.cc/api/users/login", body, "application/json");
         this.accessToken = responseDict.accessToken;
-        Console.WriteLine("Conexão estabelecida com sucesso!");
+        Console.WriteLine("Connection successfully established!");
     }
 }

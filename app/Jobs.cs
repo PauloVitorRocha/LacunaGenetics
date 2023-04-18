@@ -79,16 +79,7 @@ public class Job
             stringToBeChecked.Remove(0, 1);
             stringToBeChecked.Append(decodedGeneStrand[halfGeneSize + i]);
         }
-        Console.WriteLine("Ativo = {0}", isActive);
+        Console.WriteLine("Active = {0}", isActive);
         return isActive;
-
-        // var body = new Dictionary<string, bool>{
-        //     {"isActivated", isActive}
-        // };
-        // AsyncFunctions request = new AsyncFunctions();
-        // string url = "https://gene.lacuna.cc/api/dna/jobs/" + jobId + "/gene";
-
-        // var responseDict = await request.makeAsyncRequestBool(url, body, "application/json", userAccessToken);
-        // Console.WriteLine("Check Gene Response = {0}", responseDict.code);
     }
 }

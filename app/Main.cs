@@ -5,12 +5,15 @@ public class Program
 
         string? hasAccount = "";
         bool invalid = false;
-        while (hasAccount.CompareTo("s") != 0 && hasAccount.CompareTo("n") != 0)
+        while (hasAccount.CompareTo("y") != 0 && hasAccount.CompareTo("n") != 0)
         {
+            Console.Clear();
             if (invalid)
-                Console.WriteLine("\nOpção inválida, apenas 's' ou 'n' são aceitas");
+                Console.WriteLine("\nInvalid option, only 'y' or 'n' is accepted");
             invalid = true;
-            Console.WriteLine("\nJá possui conta? (s/n)");
+            Console.WriteLine("\n############ Menu ############");
+            Console.WriteLine("\nAlready have an account? (y/n)");
+
             hasAccount = Console.ReadLine();
             if (hasAccount is null)
             {
@@ -19,6 +22,7 @@ public class Program
 
         }
         User user = new User();
+        Console.Clear();
         if (hasAccount.CompareTo("n") == 0)
         {
             await user.register();
@@ -28,29 +32,32 @@ public class Program
         {
             await user.login();
         }
-        Console.WriteLine("\n############ Menu ############");
-        Console.WriteLine("1 - Pega um novo Job");
-        Console.WriteLine("0 - Sair");
         int optNumber;
         while (true)
         {
+            Console.WriteLine("\n############ Menu ############");
+            Console.WriteLine("1 - Get new job");
+            Console.WriteLine("0 - Exit");
+
             string? option = Console.ReadLine();
             Int32.TryParse(option, out optNumber);
             switch (optNumber)
             {
                 case 1:
+                    Console.Clear();
                     AsyncFunctions req = new AsyncFunctions();
                     JSONModel.ResponseObject jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
-                    int cntRetries=0;
+                    int cntRetries = 0;
                     while (jobObject.code == "Unauthorized")
                     {
-                        if(cntRetries == 3){
-                            Console.WriteLine("Não foi possivel reconectar, encerrando aplicação...");
+                        if (cntRetries == 3)
+                        {
+                            Console.WriteLine("Could't reconnect, shutting down application...");
                             Environment.Exit(0);
                         }
-                        Console.WriteLine("Não autorizado, tentando reconexão...");
+                        Console.WriteLine("Not authorized, trying to reconnect...");
                         await user.relogin();
-                        cntRetries ++;
+                        cntRetries++;
                         jobObject = await req.asyncGet("https://gene.lacuna.cc/api/dna/jobs", user.AccessToken);
                     }
 
@@ -106,9 +113,15 @@ public class Program
 
                     break;
                 case 0:
-                    Console.WriteLine("\nEncerrando...\n");
+                    Console.WriteLine("\nShutting down...\n");
                     Environment.Exit(0);
                     break;
+
+                default:
+                    Console.Clear();
+                    Console.WriteLine("\nInvalid option");
+                    break;
+
             }
         }
 
