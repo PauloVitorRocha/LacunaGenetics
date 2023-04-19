@@ -1,5 +1,4 @@
-# Lacuna Processo Seletivo
-
+# Lacuna Genetics
 Este projeto refere-se ao processo seletivo da empresa Lacuna Software.
 
 
